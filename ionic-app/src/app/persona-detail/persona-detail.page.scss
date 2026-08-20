@@ -1,0 +1,29 @@
+.hero {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.hero h1,
+.hero p {
+  margin: 8px 0 0;
+}
+
+.hero p {
+  color: var(--ion-color-medium);
+}
+
+.avatar {
+  width: 72px;
+  height: 72px;
+  margin: 8px auto 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.prompt {
+  white-space: pre-wrap;
+}
