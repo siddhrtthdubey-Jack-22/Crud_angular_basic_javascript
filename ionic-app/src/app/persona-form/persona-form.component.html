@@ -1,0 +1,39 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ isEdit ? 'Update persona' : 'Create persona' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cancel()">Cancel</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list>
+    <ion-item>
+      <ion-label position="stacked">Name</ion-label>
+      <ion-input [(ngModel)]="form.name" name="name" maxlength="60" required></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Role</ion-label>
+      <ion-input [(ngModel)]="form.role" name="role" placeholder="e.g. Coding tutor" required></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Tone</ion-label>
+      <ion-select [(ngModel)]="form.tone" name="tone" interface="popover">
+        <ion-select-option *ngFor="let tone of tones" [value]="tone">{{ tone }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Description</ion-label>
+      <ion-textarea [(ngModel)]="form.description" name="description" rows="3" required></ion-textarea>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">System prompt</ion-label>
+      <ion-textarea [(ngModel)]="form.systemPrompt" name="systemPrompt" rows="5" required></ion-textarea>
+    </ion-item>
+  </ion-list>
+
+  <ion-button expand="block" class="ion-margin-top" [disabled]="!canSave" (click)="save()">
+    {{ isEdit ? 'Save changes' : 'Create' }}
+  </ion-button>
+</ion-content>

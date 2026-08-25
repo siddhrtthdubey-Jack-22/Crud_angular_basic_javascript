@@ -1,5 +1,5 @@
 import { Chess } from "chess.js";
-import { PERSONAS, getPersona } from "./personas.js";
+import { listPersonas, getPersona } from "./personas.js";
 import { renderBoard } from "./board.js";
 import { choosePersonaMove, thinkDelay } from "./engine.js";
 
@@ -175,6 +175,7 @@ function lobbyView() {
           <p>AI personas with distinct voices and playing styles</p>
         </div>
       </div>
+      <a class="btn" href="/persona-studio/">Persona studio</a>
     </header>
     <section class="hero">
       <div>
@@ -184,7 +185,7 @@ function lobbyView() {
           Each persona searches differently, blunders differently, and talks like itself.
         </p>
         <div class="pills">
-          <span class="pill">6 personas</span>
+          <span class="pill">Built-in + studio personas</span>
           <span class="pill">Human-like mistakes</span>
           <span class="pill">In-game banter</span>
           <span class="pill">Runs in the browser</span>
@@ -199,7 +200,7 @@ function lobbyView() {
       </div>
     </section>
     <div class="grid">
-      ${PERSONAS.map(
+      ${listPersonas().map(
         (p) => `
         <button class="card" data-persona="${p.id}" style="--persona:${p.color}">
           <header>
@@ -246,7 +247,10 @@ function playView() {
           <p>vs ${persona.name}</p>
         </div>
       </div>
-      <button class="btn" data-action="lobby">All personas</button>
+      <div class="actions">
+        <a class="btn" href="/persona-studio/">Persona studio</a>
+        <button class="btn" data-action="lobby">All personas</button>
+      </div>
     </header>
     <div class="play-layout">
       <div class="board-wrap">
@@ -382,5 +386,11 @@ app.addEventListener("click", (event) => {
     render();
   }
 });
+
+const requested = new URLSearchParams(window.location.search).get("persona");
+if (requested && listPersonas().some((persona) => persona.id === requested)) {
+  state.view = "color";
+  state.personaId = requested;
+}
 
 render();

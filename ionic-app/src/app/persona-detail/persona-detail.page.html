@@ -1,0 +1,39 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Persona</ion-title>
+    <ion-buttons slot="end">
+      <ion-button color="danger" [disabled]="!persona" (click)="remove()">Delete</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" *ngIf="persona">
+  <div class="hero">
+    <div class="avatar" [style.background]="persona.color">
+      {{ persona.name.charAt(0).toUpperCase() }}
+    </div>
+    <h1>{{ persona.name }}</h1>
+    <p>{{ persona.role }} · {{ persona.tone }}</p>
+  </div>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-subtitle>Description</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>{{ persona.description }}</ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-subtitle>System prompt</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content class="prompt">{{ persona.systemPrompt }}</ion-card-content>
+  </ion-card>
+</ion-content>
+
+<ion-content class="ion-padding" *ngIf="!persona">
+  <p>This persona was not found.</p>
+</ion-content>

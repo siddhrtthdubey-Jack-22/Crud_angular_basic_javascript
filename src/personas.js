@@ -181,8 +181,148 @@ export const PERSONAS = [
     onLoss: ["You found the only move. Impressive."],
     onDraw: ["Drawn. Correct play."],
   },
+  {
+    id: "chessverse-ai",
+    name: "ChessVerse.AI",
+    title: "House persona",
+    rating: 1600,
+    archetype: "Coach",
+    style: "The ChessVerse.AI studio persona: club-strong, talkative, and built to feel like a partner instead of a slider.",
+    openings: "e4 and d4, principle-first",
+    depth: 3,
+    errorRate: 0.12,
+    captureBias: 10,
+    kingSafety: 12,
+    centerControl: 12,
+    aggression: 12,
+    thinkMs: [550, 1200],
+    color: "#d4af5a",
+    accent: "#f3e0a8",
+    greetings: [
+      "ChessVerse.AI here. Pick a fight, then tell me what you were trying to do.",
+      "I was born in the persona studio. Let's see if your ideas hold up on the board.",
+    ],
+    onMove: [
+      "This is the kind of move I would teach, not just play.",
+      "Keeping the persona honest — no engine magic.",
+      "Ask what the pawn wants. That's the lesson.",
+    ],
+    onCheck: ["Check. The king is part of the story now."],
+    onWin: ["ChessVerse.AI takes the point. Rematch whenever you're ready."],
+    onLoss: ["You beat the house persona. That's the requirement, completed."],
+    onDraw: ["Shared point. The studio will remember this one."],
+  },
 ];
 
+export const STUDIO_STORAGE_KEY = "ai-assistant-personas";
+
+const TONE_STYLE = {
+  Playful: {
+    depth: 1,
+    errorRate: 0.4,
+    captureBias: 10,
+    kingSafety: 6,
+    centerControl: 6,
+    aggression: 12,
+    thinkMs: [350, 900],
+    rating: 800,
+    archetype: "Explorer",
+  },
+  Friendly: {
+    depth: 2,
+    errorRate: 0.25,
+    captureBias: 6,
+    kingSafety: 14,
+    centerControl: 10,
+    aggression: 6,
+    thinkMs: [500, 1100],
+    rating: 1200,
+    archetype: "Guardian",
+  },
+  Professional: {
+    depth: 3,
+    errorRate: 0.1,
+    captureBias: 4,
+    kingSafety: 16,
+    centerControl: 14,
+    aggression: 4,
+    thinkMs: [700, 1400],
+    rating: 1700,
+    archetype: "Observer",
+  },
+  Concise: {
+    depth: 3,
+    errorRate: 0.08,
+    captureBias: 12,
+    kingSafety: 12,
+    centerControl: 14,
+    aggression: 14,
+    thinkMs: [600, 1200],
+    rating: 1900,
+    archetype: "Hunter",
+  },
+  Formal: {
+    depth: 4,
+    errorRate: 0.04,
+    captureBias: 6,
+    kingSafety: 14,
+    centerControl: 16,
+    aggression: 8,
+    thinkMs: [800, 1500],
+    rating: 2100,
+    archetype: "Mediator",
+  },
+};
+
+export function assistantToChessPersona(assistant) {
+  const style = TONE_STYLE[assistant.tone] ?? TONE_STYLE.Friendly;
+  const prompt = String(assistant.systemPrompt || assistant.description || "Let's play.").trim();
+  return {
+    id: assistant.id,
+    name: assistant.name,
+    title: assistant.role || "Studio persona",
+    rating: style.rating,
+    archetype: style.archetype,
+    style: assistant.description || prompt,
+    openings: "Principle-first",
+    depth: style.depth,
+    errorRate: style.errorRate,
+    captureBias: style.captureBias,
+    kingSafety: style.kingSafety,
+    centerControl: style.centerControl,
+    aggression: style.aggression,
+    thinkMs: style.thinkMs,
+    color: assistant.color || "#d4af5a",
+    accent: assistant.color || "#c9a227",
+    greetings: [prompt],
+    onMove: ["Noted.", "Continuing the persona's plan.", "Your move taught me something."],
+    onCheck: ["Check."],
+    onWin: ["Game over — the studio persona holds."],
+    onLoss: ["You outplayed this persona."],
+    onDraw: ["Shared point."],
+    fromStudio: true,
+  };
+}
+
+export function loadStudioPersonas() {
+  if (typeof localStorage === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(STUDIO_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.map(assistantToChessPersona);
+  } catch {
+    return [];
+  }
+}
+
+export function listPersonas() {
+  const builtInIds = new Set(PERSONAS.map((persona) => persona.id));
+  const extras = loadStudioPersonas().filter((persona) => !builtInIds.has(persona.id));
+  return [...PERSONAS, ...extras];
+}
+
 export function getPersona(id) {
-  return PERSONAS.find((persona) => persona.id === id) ?? PERSONAS[0];
+  return listPersonas().find((persona) => persona.id === id) ?? PERSONAS[0];
 }
