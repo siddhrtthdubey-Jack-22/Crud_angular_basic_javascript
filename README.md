@@ -1,38 +1,39 @@
 # ChessVerse.AI
 
-Browser chess app with **AI personas** — opponents that play and talk like distinct characters instead of a single difficulty slider.
+Chess in the browser, plus the **AI assistant persona** studio this project started from. Personas you create in the studio can be played on the ChessVerse.AI board.
 
-This repository now hosts the ChessVerse.AI web application (the previous README described Angular CRUD learning notes).
+## Apps in this repo
 
-## Play
+| App | Path | Stack |
+| --- | --- | --- |
+| ChessVerse.AI board | `/` | Vite, chess.js, persona engine |
+| Persona studio | `/persona-studio/` | AngularJS CRUD, `localStorage` |
+| Ionic personas | `ionic-app/` | Ionic Angular, Capacitor |
+
+Both studio apps share the key `ai-assistant-personas`. ChessVerse.AI is seeded as a house persona.
+
+## Run the chess board and studio
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open the printed local URL, pick a persona, choose White or Black, and play.
+Open the printed URL for the board. Open `/persona-studio/` to create or edit AI assistant personas (including ChessVerse.AI), then use **Play this persona in ChessVerse.AI**.
 
 ```bash
 npm test
 npm run build
 ```
 
-## Personas
+## Ionic app
 
-| Persona | Style | Strength |
-| --- | --- | --- |
-| Nova | Curious beginner | ~650 |
-| Rookie Raja | Solid club player | ~1100 |
-| Viper | Aggressive tactician | ~1450 |
-| Sage | Positional squeeze | ~1700 |
-| Hunter Kade | Calculator | ~1950 |
-| Grandmaster Ghost | Quiet, strong search | ~2300 |
+```bash
+cd ionic-app
+npm install
+npm start
+```
 
-Each persona mixes search depth, capture hunger, king safety, center control, and an error rate so games feel human rather than engine-perfect. Banter is tied to checks, wins, losses, and draws.
+## Built-in chess opponents
 
-## Stack
-
-- Vite
-- chess.js for rules and legal moves
-- In-browser minimax with persona-weighted evaluation (no server required)
+Nova, Rookie Raja, Viper, Sage, Hunter Kade, Grandmaster Ghost, and **ChessVerse.AI**. Studio personas appear on the lobby after you save them.

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="personaApp">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Assistant Persona CRUD</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+    <script src="js/app.js"></script>
+  </head>
+  <body ng-controller="PersonaController as vm">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">AngularJS · CRUD · ChessVerse.AI</p>
+        <h1>AI Assistant Personas</h1>
+        <p class="subtitle">Create, view, update, and delete assistant personalities — including ChessVerse.AI.</p>
+      </div>
+      <div class="card-actions">
+        <a class="btn ghost" href="/">Play chess</a>
+        <button class="btn primary" type="button" ng-click="vm.openForm()">
+          + New persona
+        </button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel">
+        <div class="toolbar">
+          <input
+            class="search"
+            type="search"
+            placeholder="Search by name, role, or tone..."
+            ng-model="vm.searchText"
+          />
+          <span class="count">{{ vm.filteredCount() }} personas</span>
+        </div>
+
+        <div class="empty" ng-if="!vm.personas.length">
+          No personas yet. Click <strong>New persona</strong> to add one.
+        </div>
+
+        <div class="empty" ng-if="vm.personas.length && !vm.filteredCount()">
+          No personas match “{{ vm.searchText }}”.
+        </div>
+
+        <ul class="persona-list">
+          <li
+            class="persona-card"
+            ng-repeat="persona in vm.personas | filter:vm.searchText"
+            ng-class="{ selected: vm.selected && vm.selected.id === persona.id }"
+            ng-click="vm.select(persona)"
+          >
+            <span class="avatar" ng-style="{ background: persona.color }">
+              {{ persona.name.charAt(0).toUpperCase() }}
+            </span>
+            <div class="card-body">
+              <h2>{{ persona.name }}</h2>
+              <p>{{ persona.role }} · {{ persona.tone }}</p>
+            </div>
+            <div class="card-actions" ng-click="$event.stopPropagation()">
+              <button class="btn ghost" type="button" ng-click="vm.openForm(persona)">
+                Edit
+              </button>
+              <button class="btn danger" type="button" ng-click="vm.remove(persona)">
+                Delete
+              </button>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <aside class="panel detail" ng-if="vm.selected">
+        <p class="eyebrow">Read</p>
+        <h2>{{ vm.selected.name }}</h2>
+        <dl>
+          <dt>Role</dt>
+          <dd>{{ vm.selected.role }}</dd>
+          <dt>Tone</dt>
+          <dd>{{ vm.selected.tone }}</dd>
+          <dt>Description</dt>
+          <dd>{{ vm.selected.description }}</dd>
+          <dt>System prompt</dt>
+          <dd class="prompt">{{ vm.selected.systemPrompt }}</dd>
+        </dl>
+        <p>
+          <a class="btn primary" ng-href="/?persona={{ vm.selected.id }}">Play this persona in ChessVerse.AI</a>
+        </p>
+      </aside>
+
+      <aside class="panel detail" ng-if="!vm.selected">
+        <p class="eyebrow">Read</p>
+        <h2>Select a persona</h2>
+        <p>Choose a card on the left to view its details.</p>
+      </aside>
+    </main>
+
+    <div class="modal-backdrop" ng-if="vm.formOpen" ng-click="vm.closeForm()"></div>
+    <section class="modal" ng-if="vm.formOpen">
+      <h2>{{ vm.form.id ? 'Update persona' : 'Create persona' }}</h2>
+      <form name="personaForm" ng-submit="vm.save()" novalidate>
+        <label>
+          Name
+          <input type="text" ng-model="vm.form.name" required maxlength="60" />
+        </label>
+        <label>
+          Role
+          <input
+            type="text"
+            ng-model="vm.form.role"
+            required
+            placeholder="e.g. Coding tutor, Support agent"
+          />
+        </label>
+        <label>
+          Tone
+          <select ng-model="vm.form.tone" required>
+            <option value="Friendly">Friendly</option>
+            <option value="Professional">Professional</option>
+            <option value="Concise">Concise</option>
+            <option value="Playful">Playful</option>
+            <option value="Formal">Formal</option>
+          </select>
+        </label>
+        <label>
+          Description
+          <textarea ng-model="vm.form.description" rows="3" required></textarea>
+        </label>
+        <label>
+          System prompt
+          <textarea ng-model="vm.form.systemPrompt" rows="5" required></textarea>
+        </label>
+        <div class="modal-actions">
+          <button class="btn ghost" type="button" ng-click="vm.closeForm()">Cancel</button>
+          <button class="btn primary" type="submit" ng-disabled="personaForm.$invalid">
+            {{ vm.form.id ? 'Save changes' : 'Create' }}
+          </button>
+        </div>
+      </form>
+    </section>
+  </body>
+</html>

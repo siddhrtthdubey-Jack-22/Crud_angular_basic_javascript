@@ -1,0 +1,47 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>ChessVerse Personas</ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-searchbar
+      [(ngModel)]="searchText"
+      (ionInput)="refresh()"
+      placeholder="Search by name, role, or tone"
+    ></ion-searchbar>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-list *ngIf="personas.length; else empty">
+    <ion-item-sliding *ngFor="let persona of personas">
+      <ion-item button detail="true" (click)="openDetail(persona)">
+        <ion-avatar slot="start">
+          <div class="avatar" [style.background]="persona.color">
+            {{ persona.name.charAt(0).toUpperCase() }}
+          </div>
+        </ion-avatar>
+        <ion-label>
+          <h2>{{ persona.name }}</h2>
+          <p>{{ persona.role }} · {{ persona.tone }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item-options side="end">
+        <ion-item-option color="tertiary" (click)="openForm(persona)">Edit</ion-item-option>
+        <ion-item-option color="danger" (click)="remove(persona, $event)">Delete</ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+
+  <ng-template #empty>
+    <div class="empty">
+      <p *ngIf="searchText">No personas match “{{ searchText }}”.</p>
+      <p *ngIf="!searchText">No personas yet. Tap + to add one.</p>
+    </div>
+  </ng-template>
+
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button (click)="openForm()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>
